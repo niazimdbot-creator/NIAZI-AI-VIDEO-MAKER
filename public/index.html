@@ -1,0 +1,539 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+  <title>NIAZI AI VIDEO MAKER</title>
+
+  <style>
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      background: #050505;
+      color: white;
+      font-family: Arial, sans-serif;
+    }
+
+    .container {
+      width: min(900px, 94%);
+      margin: 30px auto;
+    }
+
+    .logo {
+      text-align: center;
+      font-size: 30px;
+      font-weight: 900;
+      letter-spacing: 2px;
+      animation: rgb 3s linear infinite;
+    }
+
+    @keyframes rgb {
+      0% {
+        color: #ff0055;
+        text-shadow: 0 0 15px #ff0055;
+      }
+
+      33% {
+        color: #00ffff;
+        text-shadow: 0 0 15px #00ffff;
+      }
+
+      66% {
+        color: #7dff00;
+        text-shadow: 0 0 15px #7dff00;
+      }
+
+      100% {
+        color: #ff0055;
+        text-shadow: 0 0 15px #ff0055;
+      }
+    }
+
+    .card {
+      margin-top: 22px;
+      padding: 22px;
+      border-radius: 20px;
+      background: #111;
+      border: 1px solid #292929;
+      box-shadow: 0 0 30px rgba(0, 255, 255, 0.08);
+    }
+
+    label {
+      display: block;
+      margin: 15px 0 8px;
+      font-weight: bold;
+    }
+
+    textarea,
+    select {
+      width: 100%;
+      border: 1px solid #333;
+      border-radius: 12px;
+      background: #080808;
+      color: white;
+      padding: 13px;
+      outline: none;
+    }
+
+    textarea {
+      min-height: 190px;
+      resize: vertical;
+    }
+
+    button {
+      width: 100%;
+      margin-top: 20px;
+      padding: 15px;
+      border: 0;
+      border-radius: 12px;
+      color: white;
+      font-size: 17px;
+      font-weight: bold;
+      cursor: pointer;
+      background: linear-gradient(
+        90deg,
+        #ff0055,
+        #7d00ff,
+        #00d9ff
+      );
+    }
+
+    button:disabled {
+      opacity: 0.5;
+      cursor: not-allowed;
+    }
+
+    .progress-box {
+      display: none;
+      margin-top: 20px;
+    }
+
+    .progress {
+      height: 12px;
+      overflow: hidden;
+      border-radius: 20px;
+      background: #222;
+    }
+
+    .bar {
+      width: 0%;
+      height: 100%;
+      transition: 0.4s;
+      background: linear-gradient(
+        90deg,
+        #ff0055,
+        #00ffff,
+        #7dff00
+      );
+    }
+
+    .status {
+      margin-top: 12px;
+      text-align: center;
+      color: #aaa;
+    }
+
+    .error {
+      margin-top: 15px;
+      color: #ff5577;
+      text-align: center;
+      white-space: pre-wrap;
+    }
+
+    .info {
+      margin-top: 18px;
+      color: #888;
+      font-size: 13px;
+      line-height: 1.6;
+    }
+  </style>
+</head>
+
+<body>
+
+  <div class="container">
+
+    <div class="logo">
+      NIAZI AI VIDEO MAKER
+    </div>
+
+    <div class="card">
+
+      <label>
+        📖 Roman Urdu Story
+      </label>
+
+      <textarea
+        id="story"
+        placeholder="Apni Roman Urdu story yahan likho...
+
+Example:
+Ek chhota sher jungle mein rehta tha.
+Ek din us ne ek rabbit ko mushkil mein dekha.
+Sher ne rabbit ki madad ki."
+      ></textarea>
+
+      <label>
+        🎨 Video Style
+      </label>
+
+      <select id="style">
+
+        <option>
+          Colorful 3D cartoon animation
+        </option>
+
+        <option>
+          Cute children's animation
+        </option>
+
+        <option>
+          Storybook animation
+        </option>
+
+        <option>
+          Anime children's animation
+        </option>
+
+        <option>
+          Cinematic animation
+        </option>
+
+      </select>
+
+      <label>
+        🎙️ Voice Style
+      </label>
+
+      <select id="voice">
+
+        <option value="friendly female">
+          Friendly Female
+        </option>
+
+        <option value="friendly male">
+          Friendly Male
+        </option>
+
+        <option value="warm female storyteller">
+          Female Storyteller
+        </option>
+
+        <option value="warm male storyteller">
+          Male Storyteller
+        </option>
+
+      </select>
+
+      <label>
+        📱 Video Format
+      </label>
+
+      <select id="aspectRatio">
+
+        <option value="16:9">
+          YouTube 16:9
+        </option>
+
+        <option value="9:16">
+          TikTok / YouTube Shorts 9:16
+        </option>
+
+      </select>
+
+      <button id="generate">
+        🚀 GENERATE AI VIDEO
+      </button>
+
+      <div
+        class="progress-box"
+        id="progressBox"
+      >
+
+        <div class="progress">
+
+          <div
+            class="bar"
+            id="bar"
+          ></div>
+
+        </div>
+
+        <div
+          class="status"
+          id="status"
+        >
+          Starting...
+        </div>
+
+      </div>
+
+      <div
+        class="error"
+        id="error"
+      ></div>
+
+      <div class="info">
+
+        ⚡ AI video generation<br>
+        🎙️ AI audio generation<br>
+        🎬 Story automatically scenes mein divide hogi<br>
+        📱 YouTube / Shorts format available
+
+      </div>
+
+    </div>
+
+  </div>
+
+  <script>
+
+    const generateButton =
+      document.getElementById("generate");
+
+    const storyInput =
+      document.getElementById("story");
+
+    const styleInput =
+      document.getElementById("style");
+
+    const voiceInput =
+      document.getElementById("voice");
+
+    const aspectInput =
+      document.getElementById("aspectRatio");
+
+    const progressBox =
+      document.getElementById("progressBox");
+
+    const progressBar =
+      document.getElementById("bar");
+
+    const statusText =
+      document.getElementById("status");
+
+    const errorText =
+      document.getElementById("error");
+
+
+    generateButton.addEventListener(
+      "click",
+      startGeneration
+    );
+
+
+    async function startGeneration() {
+
+      errorText.textContent = "";
+
+      const story =
+        storyInput.value.trim();
+
+      if (story.length < 5) {
+
+        errorText.textContent =
+          "Pehle story likho.";
+
+        return;
+      }
+
+
+      generateButton.disabled = true;
+
+      generateButton.textContent =
+        "⏳ GENERATING...";
+
+
+      progressBox.style.display =
+        "block";
+
+      progressBar.style.width =
+        "2%";
+
+      statusText.textContent =
+        "AI video generation start ho rahi hai...";
+
+
+      try {
+
+        const response =
+          await fetch("/api/generate", {
+
+            method: "POST",
+
+            headers: {
+              "Content-Type":
+                "application/json"
+            },
+
+            body: JSON.stringify({
+
+              story: story,
+
+              style:
+                styleInput.value,
+
+              voice:
+                voiceInput.value,
+
+              aspectRatio:
+                aspectInput.value
+
+            })
+
+          });
+
+
+        const data =
+          await response.json();
+
+
+        if (!response.ok) {
+
+          throw new Error(
+            data.error ||
+            "Generation start nahi hui."
+          );
+
+        }
+
+
+        checkStatus(data.jobId);
+
+
+      } catch (error) {
+
+        showError(error.message);
+
+      }
+
+    }
+
+
+    function checkStatus(jobId) {
+
+      const timer =
+        setInterval(async () => {
+
+          try {
+
+            const response =
+              await fetch(
+                `/api/status/${jobId}`
+              );
+
+
+            const job =
+              await response.json();
+
+
+            if (!response.ok) {
+
+              throw new Error(
+                job.error ||
+                "Status check failed."
+              );
+
+            }
+
+
+            progressBar.style.width =
+              `${job.progress || 0}%`;
+
+
+            if (
+              job.status ===
+              "queued"
+            ) {
+
+              statusText.textContent =
+                "Job queue mein hai...";
+
+            }
+
+
+            else if (
+              job.status ===
+              "generating"
+            ) {
+
+              statusText.textContent =
+                `Scene ${job.currentScene}/${job.total} generate ho raha hai...`;
+
+            }
+
+
+            else if (
+              job.status ===
+              "completed"
+            ) {
+
+              clearInterval(timer);
+
+              progressBar.style.width =
+                "100%";
+
+              statusText.textContent =
+                "✅ Generation complete!";
+
+
+              generateButton.disabled =
+                false;
+
+              generateButton.textContent =
+                "🚀 GENERATE AI VIDEO";
+
+            }
+
+
+            else if (
+              job.status ===
+              "error"
+            ) {
+
+              clearInterval(timer);
+
+              throw new Error(
+                job.error ||
+                "Video generation failed."
+              );
+
+            }
+
+          } catch (error) {
+
+            clearInterval(timer);
+
+            showError(
+              error.message
+            );
+
+          }
+
+        }, 3000);
+
+    }
+
+
+    function showError(message) {
+
+      errorText.textContent =
+        message;
+
+      generateButton.disabled =
+        false;
+
+      generateButton.textContent =
+        "🚀 GENERATE AI VIDEO";
+
+    }
+
+  </script>
+
+</body>
+</html>
